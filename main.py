@@ -3,18 +3,20 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 capture = pyshark.LiveCapture(interface='Wi-Fi', tshark_path=os.getenv("TSHARK_LOC"), display_filter='tls.handshake')
+cipher_suites = []
 for packet in capture.sniff_continuously():
     try:
+        
+
         if hasattr(packet, 'tls'):
-            print("tls handshake found")
-            if 'handshake_type' in packet.tls.field_names:
-                print("Handshake type : ", packet.tls.handshake_type)
-            if 'record_version' in packet.tls.field_names:
-                print("TLS version : ", packet.tls.record_version)
-            if 'handshake_ciphersuite' in packet.tls.field_names:
-                print("Cipher suite: ", packet.tls.handshake_ciphersuite)
-            if 'handshake_extensions_server_name' in packet.tls.field_names:
-                print("Domain (SNI):", packet.tls.handshake_extensions_server_name)
-            print("packet finished\n")
-    except Exception as err:
-        print("erorr found")
+
+            for i in packet.tls.handshake_ciphersuite.all_fields:
+                cipher_suites.append(i.get_default_value())
+            for i in packet.tls.field_names:
+                print(i)
+            print(packet.tls.handshake_extension_type.all_fields)
+            for i in packet.tls.handshake_extension_type.all_fields:
+                print(i.get_default_value())
+            break
+    except Exception as e:
+        print(e)
