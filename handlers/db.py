@@ -29,3 +29,5 @@ def store_fingerprint(fingerprint: str):
     print(f"stored fingerprint : {hex_fingerprint}")
     cursor.close()
     conn.close()
+
+

@@ -2,4 +2,4 @@
 field_names
 **/__pycache__/
 *.pyc
-/.vscode
+.vscode/

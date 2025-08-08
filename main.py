@@ -1,6 +1,7 @@
 import pyshark
 from dotenv import load_dotenv
 import os
+from handlers.funcs import *
 from handlers.db import store_fingerprint
 
 load_dotenv()
@@ -52,7 +53,9 @@ for packet in capture.sniff_continuously():
 
             # print(the_grand_list) 
             the_grand_string = ','.join(g for g in the_grand_list)
-            store_fingerprint(the_grand_string)
+            print(a for a in packet.tls.record.all_fields)
+            # print(md5_of_string(the_grand_string))
+            # store_fingerprint(the_grand_string)
             
                        
     except Exception as e:
