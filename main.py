@@ -1,21 +1,24 @@
 import pyshark
 from dotenv import load_dotenv
 import os
+from handlers.db import store_fingerprint
+
 load_dotenv()
 capture = pyshark.LiveCapture(interface='Wi-Fi', tshark_path=os.getenv("TSHARK_LOC"), display_filter='tls.handshake')
-cipher_suites = []
-cipher_string = ""
-extensions_list = []
-extensions_string = ""
-the_grand_list = []
-the_grand_string = ""
-ec_point_list = []
-ec_point_string = ""
-supported_groups_list = []
-supported_groups_string = ""
+
 for packet in capture.sniff_continuously():
     try:
         
+        cipher_suites = []
+        cipher_string = ""
+        extensions_list = []
+        extensions_string = ""
+        the_grand_list = []
+        the_grand_string = ""
+        ec_point_list = []
+        ec_point_string = ""
+        supported_groups_list = []
+        supported_groups_string = ""
 
         if hasattr(packet, 'tls'):
             version = int(packet.tls.handshake_version, 16)
@@ -47,7 +50,10 @@ for packet in capture.sniff_continuously():
             ec_point_string = '-'.join(str(ec) for ec in ec_point_list)
             the_grand_list.append(ec_point_string)
 
-            print(the_grand_list)            
-            break
+            # print(the_grand_list) 
+            the_grand_string = ','.join(g for g in the_grand_list)
+            store_fingerprint(the_grand_string)
+            
+                       
     except Exception as e:
         print(e)
